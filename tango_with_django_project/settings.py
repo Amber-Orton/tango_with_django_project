@@ -25,6 +25,10 @@ SECRET_KEY = 'yr38pes&jf!ix5d3zntq0p%oobcqhg610i6!bu459xzy-mqznq'
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
+#used for dynami assignment of templates file path on differnt machines
+TEMPLATE_DIR = os.path.join(BASE_DIR, 'templates')
+print(BASE_DIR)
+
 ALLOWED_HOSTS = []
 
 
@@ -55,7 +59,7 @@ ROOT_URLCONF = 'tango_with_django_project.urls'
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
-        'DIRS': [],
+        'DIRS': [TEMPLATE_DIR, ],
         'APP_DIRS': True,
         'OPTIONS': {
             'context_processors': [
