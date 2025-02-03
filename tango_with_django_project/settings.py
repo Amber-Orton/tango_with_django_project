@@ -27,7 +27,12 @@ DEBUG = True
 
 #used for dynami assignment of templates file path on differnt machines
 TEMPLATE_DIR = os.path.join(BASE_DIR, 'templates')
-print(BASE_DIR)
+
+#direction to the static file
+STATIC_DIR = os.path.join(BASE_DIR, 'static')
+
+
+
 
 ALLOWED_HOSTS = []
 
@@ -123,3 +128,5 @@ USE_TZ = True
 # https://docs.djangoproject.com/en/2.2/howto/static-files/
 
 STATIC_URL = '/static/'
+
+STATICFILES_DIRS = [STATIC_DIR, ]
