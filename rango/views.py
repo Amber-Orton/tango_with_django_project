@@ -4,6 +4,8 @@ from rango.models import Category
 from rango.models import Page
 
 def index(request):
+    page_list = Page.objects.order_by('-views')[:5]
+    
     # Query the database for a list of ALL categories currently stored.
     # Order the categories by the number of likes in descending order.
     # Retrieve the top 5 only -- or all if less than 5.
@@ -16,6 +18,7 @@ def index(request):
     context_dict = {}
     context_dict['boldmessage'] = 'Crunchy, creamy, cookie, candy, cupcake!'
     context_dict['categories'] = category_list
+    context_dict['pages'] = page_list
     
     # Return a rendered response to send to the client.
     # We make use of the shortcut function to make our lives easier.
@@ -31,7 +34,7 @@ def show_category(request, category_name_slug):
         # If we can't, the .get() method raises a DoesNotExist exception.
         # The .get() method returns one model instance or raises an exception.
         category = Category.objects.get(slug=category_name_slug)
-        
+
         # Retrieve all of the associated pages.
         # The filter() will return a list of page objects or an empty list.
         pages = Page.objects.filter(category=category)
