@@ -3,6 +3,10 @@ from django.http import HttpResponse
 from rango.models import Category, Page
 from rango.forms import CategoryForm, PageForm, UserForm, UserProfileForm
 from django.urls import reverse
+from django.contrib.auth import authenticate, login, logout
+from django.contrib.auth.decorators import login_required
+
+
 
 
 def index(request):
@@ -62,7 +66,7 @@ def about(request):
     return render(request, 'rango/about.html')
 
 
-
+@login_required
 def add_category(request):
     form = CategoryForm()
     # A HTTP POST?
@@ -87,7 +91,7 @@ def add_category(request):
 
 
 
-
+@login_required
 def add_page(request, category_name_slug):
     try:
         category = Category.objects.get(slug=category_name_slug)
@@ -172,3 +176,48 @@ def register(request):
 
     # Render the template depending on the context.
     return render(request, 'rango/register.html', context = {'user_form': user_form, 'profile_form': profile_form, 'registered': registered})
+
+def user_login(request):
+    # If the request is a HTTP POST, try to pull out the relevant information.
+    if request.method == 'POST':
+        # Gather the username and password provided by the user.
+        # This information is obtained from the login form.
+        # We use request.POST.get('<variable>') as opposed
+        # to request.POST['<variable>'], because the
+        # request.POST.get('<variable>') returns None if the
+        # value does not exist, while request.POST['<variable>']
+        # will raise a KeyError exception.
+        username = request.POST.get('username')
+        password = request.POST.get('password')
+
+        #if the username and passowrd combo is valid return the User object
+        user = authenticate(username = username, password = password)
+
+        #if we have a correct user
+        if user:
+            #is the account active?
+            if user.is_active:
+                #log in and send them back to the homepage
+                login(request, user)
+                return redirect(reverse('rango:index'))
+            else:
+                #if inactive you cannot login
+                return HttpResponse("Your Rango account is disabled.")
+        else:
+            #bad login details used
+            print(f"Invalid login details: {username}, {password}")
+            return HttpResponse("Invalid login details supplied.")
+
+    #if not a post display the login form
+    else:
+        return render(request, 'rango/login.html')
+    
+@login_required
+def restricted(request):
+    return render(request, 'rango/restricted.html')
+
+
+@login_required
+def user_logout(request):
+    logout(request)
+    return redirect(reverse('rango:index'))
